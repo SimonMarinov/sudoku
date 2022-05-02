@@ -1,10 +1,15 @@
 package com.marinsim.sudoku;
 
-public class SudokuSolver {
+public interface SudokuSolver {
 
-   public static SudokuTable csbSolve(SudokuTable tableToSolve){
-      CsbSudkou problem = new CsbSudkou(tableToSolve);
-      problem.solve();
-   }
+   /**
+    * implemantion should be recusive
+    * after finding soulition solution should be saved into SudokuSolution
+    * @return true if table can be solved
+    */
+   public abstract boolean solve(SudokuSolution solution);
+
+
+   public long notesVisited();
 
 }
