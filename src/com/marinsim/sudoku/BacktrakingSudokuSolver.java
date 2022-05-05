@@ -5,11 +5,11 @@ import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BacktrakingSudoku implements SudokuSolver {
+public class BacktrakingSudokuSolver implements SudokuSolver {
     private int table[][];
     private static long notesVisited;
 
-    public BacktrakingSudoku(SudokuTable sudokuTable) {
+    public BacktrakingSudokuSolver(SudokuTable sudokuTable) {
         notesVisited = 0;
         this.table = sudokuTable.table;
     }
@@ -37,9 +37,8 @@ public class BacktrakingSudoku implements SudokuSolver {
             }
         }
 
-        System.out.println("Number of notes visited = " + notesVisited);
-        printTable();
-        return true;
+        solution.saveSolution(table);
+        return SudokuTable.isTableSolved(table);
     }
 
     private boolean posible(int x, int y, int val) {
@@ -73,7 +72,7 @@ public class BacktrakingSudoku implements SudokuSolver {
 
 
     @Override
-    public long notesVisited() {
+    public long getNotesVisited() {
         return notesVisited;
     }
 }

@@ -63,7 +63,6 @@ public class Position {
             }
         }
 
-        if (res.size() != 22) throw new IllegalStateException("kket neznas robci");
         return res;
     }
 
@@ -89,7 +88,6 @@ public class Position {
             }
         }
 
-        if (res.size() != 22) throw new IllegalStateException("kket neznas robci");
         return res;
     }
 

@@ -10,6 +10,6 @@ public interface SudokuSolver {
    public abstract boolean solve(SudokuSolution solution);
 
 
-   public long notesVisited();
+   public long getNotesVisited();
 
 }

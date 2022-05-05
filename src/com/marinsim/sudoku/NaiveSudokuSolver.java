@@ -1,21 +1,16 @@
 package com.marinsim.sudoku;
 
-import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-
-import java.util.ArrayList;
-import java.util.List;
-
-public class NaiveSudoku implements SudokuSolver {
+public class NaiveSudokuSolver implements SudokuSolver {
     private int table[][];
     private static long notesVisited;
 
-    public NaiveSudoku(SudokuTable table) {
+    public NaiveSudokuSolver(SudokuTable table) {
         notesVisited = 0;
         this.table = table.table;
     }
 
 
-    public NaiveSudoku(NaiveSudoku copy) {
+    public NaiveSudokuSolver(NaiveSudokuSolver copy) {
         table = new int[copy.table.length][copy.table.length];
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table.length; j++) {
@@ -33,7 +28,7 @@ public class NaiveSudoku implements SudokuSolver {
             for (int j = 0; j < table[i].length; j++) {
                 if (table[i][j] == 0) {
                     for (int k = 1; k < 10; k++) {
-                        var newSolver = new NaiveSudoku(this);
+                        var newSolver = new NaiveSudokuSolver(this);
                         newSolver.table[i][j] = k;
                         if (newSolver.solve(solution)) {
                             return true;
@@ -44,17 +39,15 @@ public class NaiveSudoku implements SudokuSolver {
             }
         }
 
-        if (isTableOk()) {
-            //print res
-            System.out.println("Number of notes visited = " + notesVisited);
-            printTable();
+        if (isTableSolved()) {
+            solution.saveSolution(table);
             return true;
         } else return false;
 
     }
 
     @Override
-    public long notesVisited() {
+    public long getNotesVisited() {
         return notesVisited;
     }
 
@@ -67,9 +60,10 @@ public class NaiveSudoku implements SudokuSolver {
         }
     }
 
-    private boolean isTableOk() {
+    private boolean isTableSolved() {
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table[i].length; j++) {
+                if (table[i][j] == 0) return false;
                 var neighbours = Position.getNeighbours(i, j);
                 for (var neighbour : neighbours) {
                     if (table[i][j] == table[neighbour.x][neighbour.y]) {

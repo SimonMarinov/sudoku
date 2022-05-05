@@ -1,17 +1,11 @@
 package com.marinsim.sudoku;
 
-import com.sun.jdi.connect.IllegalConnectorArgumentsException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.TreeSet;
-
-public class CsbSudoku implements SudokuSolver {
+public class CsbSudokuSolver implements SudokuSolver {
     private CSbSudokuVarible table[][];
     private static long notesVisited;
 
 
-    public CsbSudoku(SudokuTable tableToSolve) {
+    public CsbSudokuSolver(SudokuTable tableToSolve) {
         notesVisited = 0;
         table = new CSbSudokuVarible[tableToSolve.table.length][tableToSolve.table.length];
 
@@ -22,7 +16,7 @@ public class CsbSudoku implements SudokuSolver {
         }
     }
 
-    public CsbSudoku(CsbSudoku copy) {
+    public CsbSudokuSolver(CsbSudokuSolver copy) {
         table = new CSbSudokuVarible[copy.table.length][copy.table.length];
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table.length; j++) {
@@ -36,20 +30,23 @@ public class CsbSudoku implements SudokuSolver {
     public boolean solve(SudokuSolution solution) {
         notesVisited++;
 
-        if (isSolved()) {
-            System.out.println("Number of notes visited = " + notesVisited);
-            printTable();
-        }
 
         if (!reduceTable()) {
             return false;
         }
+
         // choose moust restricte val
         // coul be done better
         var moustRestrictedVar = getMostRestrictedVariable();
 
+        if (moustRestrictedVar == null) {
+            solution.saveSolution(table);
+            return true;
+        }
+
+
         for (var val : moustRestrictedVar.getDomain()) {
-            var newSolver = new CsbSudoku(this);
+            var newSolver = new CsbSudokuSolver(this);
             CSbSudokuVarible newVal = new CSbSudokuVarible(moustRestrictedVar.x, moustRestrictedVar.y, val);
             newSolver.table[moustRestrictedVar.x][moustRestrictedVar.y] = newVal;
             if (newSolver.solve(solution)) {
@@ -61,19 +58,9 @@ public class CsbSudoku implements SudokuSolver {
 
     }
 
-//    private  CSbSudokuVarible[][] getCopyOfTable() {
-//        CSbSudokuVarible copy[][] = new CSbSudokuVarible[table.length][table.length];
-//        for (int i = 0; i < table.length; i++) {
-//            for (int j = 0; j < table.length; j++) {
-//                var val = table[i][j];
-//                copy[i][j] = new CSbSudokuVarible(val);
-//            }
-//        }
-//        return copy;
-//    }
 
     @Override
-    public long notesVisited() {
+    public long getNotesVisited() {
         return notesVisited;
     }
 
@@ -91,6 +78,7 @@ public class CsbSudoku implements SudokuSolver {
     /**
      * makes domains of table elemnts smaler acoring to sudoku rules and rules which can be deducted from sudoku rules
      * could be done litle bit more eficintly
+     * can solve the problem
      *
      * @return true if table can be solved otherwise returns false
      */
@@ -158,12 +146,17 @@ public class CsbSudoku implements SudokuSolver {
         return true;
     }
 
+
+    /**
+     *
+     * @return null if table is solved after reduce table
+     */
     private CSbSudokuVarible getMostRestrictedVariable() {
         int smallestSize = Integer.MAX_VALUE;
         CSbSudokuVarible ret = null;
         for (var row : table) {
             for (var el : row) {
-                if (el.getDomain().size() < smallestSize) {
+                if (el.getDomain().size() > 1 && el.getDomain().size() < smallestSize) {
                     smallestSize = el.getDomain().size();
                     ret = el;
                 }
@@ -171,17 +164,5 @@ public class CsbSudoku implements SudokuSolver {
         }
         return ret;
     }
-
-    private boolean isSolved() {
-        for (var row : table) {
-            for (var el : row) {
-                if (el.getDomain().size() != 1) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
 
 }
