@@ -38,21 +38,6 @@ public class Main {
             solvers[2] = new CsbSudokuSolver(table);
 
 
-//            for (int i = 0; i < solvers.length; i++) {
-//                int finalI = i;
-//                threads.add(new Thread(() -> {
-//                    solved[finalI] = solvers[finalI].solve(solutions[finalI]);
-//                }));
-//            }
-//
-//            for (int i = 0; i < threads.size(); i++) {
-//                try {
-//                    threads.get(i).join();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
             for (int s = start; s < solvers.length; s++) {
                 solved[s] = solvers[s].solve(solutions[s]);
             }
@@ -72,9 +57,18 @@ public class Main {
             if (start== 0) {
                 System.out.println("Naive solutions notes visited:" + solvers[0].getNotesVisited());
             }
+
             System.out.println("Backtraikng solutions notes visited:" + solvers[1].getNotesVisited());
             System.out.println("Csp solutions notes visited:" + solvers[2].getNotesVisited());
 
+
+            if (solved[start]){
+                System.out.println("problem have solution here is one :");
+                System.out.println();
+                solutions[start].printSol();
+            } else {
+                System.out.println("problem does not have solution");
+            }
 
         } catch (IOException e) {
             e.printStackTrace();

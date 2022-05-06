@@ -35,4 +35,8 @@ public class SudokuSolution {
         }
         return solution.isTableSolved();
     }
+
+    public void printSol() {
+        solution.print();
+    }
 }
